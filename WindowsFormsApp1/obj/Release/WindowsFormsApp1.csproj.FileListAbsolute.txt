@@ -1,0 +1,10 @@
+C:\Work\Customers\LINZ\LOL\FormsApp\WindowsFormsApp1\bin\Release\WindowsFormsApp1.exe.config
+C:\Work\Customers\LINZ\LOL\FormsApp\WindowsFormsApp1\bin\Release\WindowsFormsApp1.exe
+C:\Work\Customers\LINZ\LOL\FormsApp\WindowsFormsApp1\bin\Release\WindowsFormsApp1.pdb
+C:\Work\Customers\LINZ\LOL\FormsApp\WindowsFormsApp1\obj\Release\WindowsFormsApp1.Form1.resources
+C:\Work\Customers\LINZ\LOL\FormsApp\WindowsFormsApp1\obj\Release\WindowsFormsApp1.Properties.Resources.resources
+C:\Work\Customers\LINZ\LOL\FormsApp\WindowsFormsApp1\obj\Release\WindowsFormsApp1.csproj.GenerateResource.cache
+C:\Work\Customers\LINZ\LOL\FormsApp\WindowsFormsApp1\obj\Release\WindowsFormsApp1.csproj.CoreCompileInputs.cache
+C:\Work\Customers\LINZ\LOL\FormsApp\WindowsFormsApp1\obj\Release\WindowsFormsApp1.exe
+C:\Work\Customers\LINZ\LOL\FormsApp\WindowsFormsApp1\obj\Release\WindowsFormsApp1.pdb
+C:\Work\Customers\LINZ\LOL\FormsApp\WindowsFormsApp1\obj\Release\WindowsFormsApp1.csprojAssemblyReference.cache

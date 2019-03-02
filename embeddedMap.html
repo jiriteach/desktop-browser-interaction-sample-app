@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+    <title>Embedded Map</title>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/3.27/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.27/esri/css/esri.css">
+
+    <script src="https://js.arcgis.com/3.27/" data-dojo-config="async:true"></script>
+    
+    <script>
+
+        var map
+        var infomationToSend
+        var autoSyncEnabled;
+
+        require(["dojo/dom",
+
+                "dojo/_base/array",
+                "dojo/parser",
+                "dojo/ready",
+                "dojo/query",
+                "dojo/on",
+
+                "esri/config",
+                "esri/map",
+                "esri/layers/FeatureLayer",
+                "esri/urlUtils",
+                "esri/arcgis/utils",
+
+                "esri/graphic",
+
+                "esri/geometry/normalizeUtils",
+                "esri/tasks/GeometryService",
+
+                "esri/symbols/SimpleFillSymbol",
+                "esri/symbols/SimpleLineSymbol",
+                "esri/renderers/SimpleRenderer",
+                "esri/graphic",
+                "esri/lang",
+                "esri/Color",
+                "dojo/number",
+
+                "esri/tasks/query",
+                "esri/tasks/QueryTask",
+
+                "dojo/domReady!"
+            ],
+            function(dom,
+                     array, parser, ready, query, on,
+                     esriConfig, Map, FeatureLayer, urlUtils, arcgisUtils,
+                     Graphic,
+                     normalizeUtils, GeometryService,
+                     SimpleFillSymbol, SimpleLineSymbol, SimpleRenderer, Graphic, esriLang, Color, number,
+                     Query, QueryTask, arrayUtils){
+
+                parser.parse();
+
+
+                esriConfig.defaults.io.corsDetection = false;
+                var gs = new GeometryService("https://utility.arcgisonline.com/ArcGIS/rest/services/Geometry/GeometryServer");
+                esriConfig.defaults.geometryService =  gs;
+
+
+                var deferred;
+                var createMapOptions = {
+                    mapOptions: {
+                        slider: true,
+                        showAttribution: false
+                    },
+                    ignorePopups: true,
+                };
+
+                var webMapItemID = "a9e17684fd494565a2002d3f64e58570";
+                deferred = arcgisUtils.createMap(webMapItemID, "map", createMapOptions);
+
+                deferred.then(function (response) {
+                    map = response.map;
+
+                    map.on("click", function(evt){
+                        runQuery(evt.mapPoint)
+                    });
+
+                }, function (error) {
+                    console.log("Error: ", error.code, " Message: ", error.message);
+                    deferred.cancel();
+                });
+
+                function runQuery(pointToQuery) {
+
+                    var query = new Query();
+                    query.geometry = pointToQuery;
+                    query.outFields = ["NZ_Primary_Land_Parcels_id", "type_"];
+                    query.returnGeometry = true;
+
+                    var queryTask = new QueryTask("http://services.arcgis.com/XTtANUDT8Va4DLwI/arcgis/rest/services/linkedparcels/FeatureServer/0");
+                    queryTask.execute(query, displayQueryResults);
+
+                }
+
+                function displayQueryResults(response) {
+                    map.graphics.clear();
+
+                    var matchedParcels = response.features[0];
+                    matchedParcels.setSymbol(
+                        new SimpleFillSymbol()
+                            .setColor(new Color([255, 255, 0, 0.5]))
+                            .setOutline(new SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new Color([255,0,0]), 3))
+                    );
+                    map.graphics.add(matchedParcels);
+
+                    infomationToSend = response;
+                    
+                    document.getElementById("notificationPanel").innerHTML = "<b>Embedded Map</b><br/><br/>Selected Parcel Information --<br/><br/>" +
+                        "Parcel Type -- <br/><span style='color: darkred; font-weight: bold;'>" + response.features[0].attributes.type_ + "</span><br/><br/>Parcel ID -- <span style='color: darkred; font-weight: bold;'>" + response.features[0].attributes.NZ_Primary_Land_Parcels_id + "</span><br/>" +
+                        "<br/><button id='syncToDesktopButton' onclick='syncToDesktop(infomationToSend);'>Sync To .NET Windows Form App</button>" +
+                        "<br/><br/><input type='checkbox' id='autoSyncCheckBox' onclick='setupAutoSync();'><span style='color: green; font-weight: bold; font-size: 0.8em;'>AutoSync" +
+                        "</span><span id='syncStatus' style='color: green; font-weight: bold; font-size: 0.8em;'></span>";
+                   
+                   if (autoSyncEnabled == true) {
+                       document.getElementById("autoSyncCheckBox").checked = true;
+                       setupAutoSync();
+                    } 
+                      
+                }
+            });
+            
+        function setupAutoSync() {
+            document.getElementById("syncStatus").innerHTML = "";
+            
+            if (document.getElementById("autoSyncCheckBox").checked == true) {
+                document.getElementById("syncToDesktopButton").disabled = true;
+                syncToDesktop(infomationToSend);
+                autoSyncEnabled = true;
+                
+            } else {
+                document.getElementById("syncToDesktopButton").disabled = false;
+                autoSyncEnabled = false;
+            }
+            
+        }
+
+        function syncToDesktop(informationToSend) {
+            //alert("Information Sent To Desktop - \nParcel Type = " + informationToSend.features[0].attributes.type_ + "\nParcel ID = " + informationToSend.features[0].attributes.NZ_Primary_Land_Parcels_id);
+			
+			var jsonConstruct = '{"selectedParcelInformation":[' +
+			'{"parcelID":"' + informationToSend.features[0].attributes.NZ_Primary_Land_Parcels_id + 
+			'","parcelType":"' + informationToSend.features[0].attributes.type_ + '"}]}';
+			
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("syncStatus").innerHTML = "<br/>-- Sync Successful - " + new Date().toLocaleString();
+				}
+			};
+			xhttp.open("POST", "http://localhost:8989/netlistener/", true);
+			xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			xhttp.send(jsonConstruct);
+			
+        }
+
+    </script>
+    <style>
+        html, body, #map {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Helvetica";
+        }
+
+        #notificationPanel{
+            background-color: #fff;
+            box-shadow: 0 0 5px #888;
+            font-size: 1em;
+            max-width: 15em;
+            padding: 0.8em;
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            z-index: 40;
+        }
+
+        #sendToDesktopButton{
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <span id="notificationPanel"><b>Embedded Map</b><br/>-- Via ArcGIS Online WebMap<br/><br/>Browse Around OR Select A Parcel</span>
+    </span>
+
+    <div id="map"></div>
+</body>
+
+</html>
