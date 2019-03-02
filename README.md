@@ -5,7 +5,7 @@
 
 This Esri ArcGIS WebApp has been created using the ArcGIS API for JavaScript - 3.27 - https://developers.arcgis.com/javascript/
 
-<img src="https://raw.githubusercontent.com/Jiriteach/SR.POC/master/Backup%20-%20.NET%20Sample%20App%20-%20Listener%20Approach/Screen%20Shot%202019-02-14%20at%2012.48.03.png" width="50%" height="50%">
+<img src="https://raw.githubusercontent.com/Jiriteach/SR.POC-.NET-App/master/Screenshots/Screen%20Shot%202019-02-14%20at%2012.48.03.png" width="50%" height="50%">
 
 ## Purpose
 The Esri ArcGIS WebApp is fully functional when embedded using a .NET browser based control within the .NET Windows Form App.
