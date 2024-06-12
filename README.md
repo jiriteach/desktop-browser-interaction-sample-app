@@ -1,4 +1,4 @@
-# Desktop Browser Interaction Sample App - Embedded Browser via Listener Approach
+# Desktop Embedded Browser Interaction Sample App via Listener Approach
 
 ## Background
 .NET Windows Form App that uses a .NET browser based control to load an Esri ArcGIS WebApp - https://lol-iframe-example.azurewebsites.net/embeddedMap.html. 
