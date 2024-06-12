@@ -19,6 +19,6 @@ The Esri ArcGIS WebApp is fully functional when embedded using a .NET browser ba
 5. JSON is de-serialized within the .NET Windows Form App into an object which can then be easily accessed.
  
 ## Credits 
-- Scott Tansley & Jithen Singh
+- Jithen Singh
 
-## Copyright © 2019 - Eagle Technology Group Ltd
+## Copyright © 2024 - Eagle Technology Group Ltd
